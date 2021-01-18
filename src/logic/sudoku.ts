@@ -19,4 +19,10 @@ export class Sudoku {
         }
     }
 
+    insert(i: number, j: number, n: number): boolean {
+
+        this.grid[i][j] = n;
+        return true;
+    }
+
 }
