@@ -4,23 +4,24 @@
  */
 export class Tile {
 
-    private grid: number[][];
+    readonly size: number = 3;
+    private readonly grid: number[][];
 
     constructor() {
         this.grid = [];
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++){
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++){
                 this.grid[i][j] = -1;
             }
         }
     }
 
     /**
-     * Simply prints out each number, with it's respective coordinates
+     * Simply prints out each number, with its respective coordinates
      */
     display(): void {
-        for (let i = 0; i < 3; i++){
-            for (let j = 0; j < 3; j++){
+        for (let i = 0; i < this.size; i++){
+            for (let j = 0; j < this.size; j++){
                 console.log(`(${i}, ${j}): ${this.grid[i][j]}`);
             }
         }
@@ -30,11 +31,11 @@ export class Tile {
      * Inserts the given number into the grid
      * @param i the column
      * @param j the row
-     * @param n the number in question
+     * @param n the number to insert into the grid
      * @return true if it was inserted, false if it failed
      */
     insert(i: number, j: number, n: number): boolean {
-        if (this.contains(n) || this.grid[i][j] !== -1)
+        if (!this.valid_number(n) || this.contains(n) || !this.is_empty(i, j))
             return false;
 
         this.grid[i][j] = n;
@@ -42,12 +43,21 @@ export class Tile {
     }
 
     /**
-     * @param n the number to check this grid contains
+     * @param i the column
+     * @param j the row
+     * @return true if the position (i,j) is empty
+     */
+    is_empty(i: number, j: number):boolean {
+        return this.grid[i][j] === -1;
+    }
+
+    /**
+     * @param n the number to check for
      * @return true if n is stored within the grid
      */
     contains(n: number): boolean {
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++) {
                 if (this.grid[i][j] === n)
                     return true;
             }
@@ -56,11 +66,37 @@ export class Tile {
     }
 
     /**
-     * Checks if the given number is between 1 and 9
+     * @param i the column
+     * @param n the number to check for
+     * @return true if n appears in column j
+     */
+    in_column(i: number, n: number): boolean {
+        for (let j = 0; j < this.size; j++) {
+            if (this.grid[i][j] === n)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * @param j the row
+     * @param n the number to check for
+     * @return true if n appears in row j
+     */
+    in_row(j: number, n: number): boolean {
+        for (let i = 0; i < this.size; i++) {
+            if (this.grid[i][j] === n)
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the given number is between 1 and size^2 (normally 3^2 = 9)
      * @param n the number to check
      */
-    valid(n: number): boolean {
-        return n > 0 && n < 10;
+    valid_number(n: number): boolean {
+        return n > 0 && n < Math.pow(this.size, 2) ;
     }
 
 }
