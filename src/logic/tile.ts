@@ -7,10 +7,11 @@ import {Sudoku} from "./sudoku";
 
 export default class Tile {
 
+    private readonly size: number = Sudoku.size
     private readonly grid: number[][];
     // add a hashmap to keep track of current numbers stored + coordinates?
 
-    constructor(private readonly size: number = Sudoku.size) {
+    constructor() {
         this.grid = [];
 
         for (let i = 0; i < this.size; i++) {
@@ -39,7 +40,7 @@ export default class Tile {
      * @return true if it was inserted, false if it failed
      */
     insert(i: number, j: number, n: number): boolean {
-        if (!this.validNumber(n) || this.contains(n) || !this.isEmpty(i, j))
+        if (!Sudoku.validNumber(n) || this.contains(n) || !this.isEmpty(i, j))
             return false;
 
         this.grid[i][j] = n;
@@ -111,14 +112,6 @@ export default class Tile {
      */
     validCoordinate(c: number): boolean {
         return c >= 0 && c <= this.size;
-    }
-
-    /**
-     * Checks if the given number is between 1 and size^2 (normally 3^2 = 9)
-     * @param n the number to check
-     */
-    validNumber(n: number): boolean {
-        return n > 0 && n <= Math.pow(this.size, 2) ;
     }
 
 }

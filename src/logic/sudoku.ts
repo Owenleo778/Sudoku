@@ -23,9 +23,35 @@ export class Sudoku {
     }
 
     insert(i: number, j: number, n: number): boolean {
-        console.log(i + j + n);
-        //this.grid[i][j] = n;
-        return true;
+        if (!this.validCoordinates(i, j) || !Sudoku.validNumber(n))
+            return false;
+
+        // Tile coordinates
+        const tileI: number = Math.floor(i / Sudoku.size);
+        const tileJ: number = Math.floor(j / Sudoku.size);
+        // coordinates to insert of the Tile
+        const numI: number = i - tileI * Sudoku.size;
+        const numJ: number = j - tileJ * Sudoku.size;
+
+        // check if viable from other tiles
+        // i.e all tiles in the same row / column, that none of those don't have this number in the same tile row / column
+        for (let col = 0; col < Sudoku.size; col++){
+            for (let row = 0; row < Sudoku.size; row++){
+                const inC = col === tileI;
+                const inR = row === tileJ;
+                if (!inC !== !inR) { // equivalent of: inC XOR inR
+                    if (inC)
+                        if (this.grid[col][row].inColumn(numI, n))
+                            return false;
+                    else if (inR)
+                        if (this.grid[col][row].inRow(numI, n))
+                            return false;
+                }
+            }
+        }
+
+        //if this placement doesn't violate any other tile placement rules, attempt to place within the specified tile
+        return this.grid[tileI][tileJ].insert(numI, numJ, n);
     }
 
     /**
@@ -43,6 +69,14 @@ export class Sudoku {
      */
     validCoordinate(c: number): boolean {
         return c >= 0 && c <= Math.pow(Sudoku.size, 2);
+    }
+
+    /**
+     * Checks if the given number is between 1 and size^2 (normally 3^2 = 9)
+     * @param n the number to check
+     */
+    public static validNumber(n: number): boolean {
+        return n > 0 && n <= Math.pow(this.size, 2) ;
     }
 
 }
