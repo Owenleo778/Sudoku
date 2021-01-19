@@ -1,14 +1,18 @@
 /**
  * A class denoting a subsection of the sudoku grid.
- * Stores 9 positions for numbers to be placed
+ * Stores a number of integers with capacity and range equal to the square of the
+ * number passed in at construction (default 3)
  */
-export class Tile {
+import {Sudoku} from "./sudoku";
 
-    readonly size: number = 3;
+export default class Tile {
+
     private readonly grid: number[][];
+    // add a hashmap to keep track of current numbers stored + coordinates?
 
-    constructor() {
+    constructor(private readonly size: number = Sudoku.size) {
         this.grid = [];
+
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++){
                 this.grid[i][j] = -1;
@@ -56,6 +60,7 @@ export class Tile {
      * @return true if n is stored within the grid
      */
     contains(n: number): boolean {
+        // use a hashmap and check instead? Depends on frequency of usage
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
                 if (this.grid[i][j] === n)
@@ -89,6 +94,23 @@ export class Tile {
                 return true;
         }
         return false;
+    }
+
+    /**
+     * @param i the column coordinate
+     * @param j the row coordinate
+     * @return true if both i and j are within the boundary
+     */
+    validCoordinates(i: number, j: number): boolean {
+        return this.validCoordinate(i) && this.validCoordinate(j);
+    }
+
+    /**
+     * @param c the coordinate to check
+     * @return true if the param c is within the range [0, size]
+     */
+    validCoordinate(c: number): boolean {
+        return c >= 0 && c <= this.size;
     }
 
     /**
