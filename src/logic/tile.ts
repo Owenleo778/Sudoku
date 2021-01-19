@@ -35,7 +35,7 @@ export class Tile {
      * @return true if it was inserted, false if it failed
      */
     insert(i: number, j: number, n: number): boolean {
-        if (!this.valid_number(n) || this.contains(n) || !this.is_empty(i, j))
+        if (!this.validNumber(n) || this.contains(n) || !this.isEmpty(i, j))
             return false;
 
         this.grid[i][j] = n;
@@ -47,7 +47,7 @@ export class Tile {
      * @param j the row
      * @return true if the position (i,j) is empty
      */
-    is_empty(i: number, j: number):boolean {
+    isEmpty(i: number, j: number):boolean {
         return this.grid[i][j] === -1;
     }
 
@@ -70,7 +70,7 @@ export class Tile {
      * @param n the number to check for
      * @return true if n appears in column j
      */
-    in_column(i: number, n: number): boolean {
+    inColumn(i: number, n: number): boolean {
         for (let j = 0; j < this.size; j++) {
             if (this.grid[i][j] === n)
                 return true;
@@ -83,7 +83,7 @@ export class Tile {
      * @param n the number to check for
      * @return true if n appears in row j
      */
-    in_row(j: number, n: number): boolean {
+    inRow(j: number, n: number): boolean {
         for (let i = 0; i < this.size; i++) {
             if (this.grid[i][j] === n)
                 return true;
@@ -95,8 +95,8 @@ export class Tile {
      * Checks if the given number is between 1 and size^2 (normally 3^2 = 9)
      * @param n the number to check
      */
-    valid_number(n: number): boolean {
-        return n > 0 && n < Math.pow(this.size, 2) ;
+    validNumber(n: number): boolean {
+        return n > 0 && n <= Math.pow(this.size, 2) ;
     }
 
 }
