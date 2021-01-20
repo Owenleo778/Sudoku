@@ -12,7 +12,7 @@ export default class Tile {
     // add a hashmap to keep track of current numbers stored + coordinates?
 
     constructor() {
-        this.grid = [];
+        this.grid = this.grid = [...Array(this.size)].map(() => Array(this.size));
 
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++){

@@ -3,21 +3,14 @@ import Tile from "./tile";
 export class Sudoku {
 
     static readonly size: number = 3;
-    private readonly grid: Tile[][];
+    grid: Tile[][];
 
     constructor() {
-        this.grid = [];
+        this.grid = [...Array(Sudoku.size)].map(() => Array(Sudoku.size));
+
         for (let i = 0; i < Sudoku.size; i++){
             for (let j = 0; j < Sudoku.size; j++){
                 this.grid[i][j] = new Tile();
-            }
-        }
-    }
-
-    display(): void {
-        for (let i = 0; i < Sudoku.size; i++){
-            for (let j = 0; j < Sudoku.size; j++){
-                console.log(`(${i}, ${j}): ${this.grid[i][j]}`);
             }
         }
     }
@@ -35,6 +28,7 @@ export class Sudoku {
 
         // check if viable from other tiles
         // i.e all tiles in the same row / column, that none of those don't have this number in the same tile row / column
+        // not scalable with the param `size`
         for (let col = 0; col < Sudoku.size; col++){
             for (let row = 0; row < Sudoku.size; row++){
                 const inC = col === tileI;
@@ -44,7 +38,7 @@ export class Sudoku {
                         if (this.grid[col][row].inColumn(numI, n))
                             return false;
                     else if (inR)
-                        if (this.grid[col][row].inRow(numI, n))
+                        if (this.grid[col][row].inRow(numJ, n))
                             return false;
                 }
             }
@@ -80,3 +74,11 @@ export class Sudoku {
     }
 
 }
+
+const s = new Sudoku();
+s.insert(1,1,7);
+s.insert(6,1,7);
+
+s.grid[0][0].display();
+console.log("-")
+s.grid[2][0].display();
