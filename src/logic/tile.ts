@@ -40,11 +40,17 @@ export default class Tile {
      * @return true if it was inserted, false if it failed
      */
     insert(i: number, j: number, n: number): boolean {
-        if (!Sudoku.validNumber(n) || this.contains(n) || !this.isEmpty(i, j))
+        if (!Sudoku.validNumber(n) || this.contains(n) || !this.isEmpty(i, j) || !this.validCoordinates(i, j))
             return false;
 
         this.grid[i][j] = n;
         return true;
+    }
+
+    erase(i: number, j: number) {
+        if (!this.validCoordinates(i, j))
+            return;
+        this.grid[i][j] = -1;
     }
 
     /**
