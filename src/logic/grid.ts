@@ -1,17 +1,20 @@
 import Tile from "./tile";
 
-export class Sudoku {
+/**
+ * Contains all logic for the board state of the sudoku puzzle
+ */
+export default class Grid {
 
     static readonly size: number = 3;
     grid: Tile[][];
     public count: number;
 
     constructor() {
-        this.grid = [...Array(Sudoku.size)].map(() => Array(Sudoku.size));
+        this.grid = [...Array(Grid.size)].map(() => Array(Grid.size));
         this.count = 0;
 
-        for (let i = 0; i < Sudoku.size; i++){
-            for (let j = 0; j < Sudoku.size; j++){
+        for (let i = 0; i < Grid.size; i++){
+            for (let j = 0; j < Grid.size; j++){
                 this.grid[i][j] = new Tile();
             }
         }
@@ -25,7 +28,7 @@ export class Sudoku {
      * @return true if the number n was successfully inserted
      */
     insert(i: number, j: number, n: number): boolean {
-        if (!this.validCoordinates(i, j) || !Sudoku.validNumber(n))
+        if (!this.validCoordinates(i, j) || !Grid.validNumber(n))
             return false;
 
         const tileI: number = this.tileCoordinate(i);
@@ -33,29 +36,43 @@ export class Sudoku {
         const numI: number = this.numberCoordinate(i, tileI);
         const numJ: number = this.numberCoordinate(j, tileJ);
 
-        // check if viable from other tiles
-        // i.e all tiles in the same row / column, that none of those don't have this number in the same tile row / column
-        // not scalable with the param `size`
-        for (let col = 0; col < Sudoku.size; col++){
-            for (let row = 0; row < Sudoku.size; row++){
-                const inC = col === tileI;
-                const inR = row === tileJ;
-                if (!inC !== !inR) { // equivalent of: inC XOR inR
-                    if (inC)
-                        if (this.grid[col][row].inColumn(numI, n))
-                            return false;
-                    else if (inR)
-                        if (this.grid[col][row].inRow(numJ, n))
-                            return false;
-                }
-            }
-        }
+        if (!this.validMove(tileI, tileJ, numI, numJ, n))
+            return false;
 
         //if this placement doesn't violate any other tile placement rules, attempt to place within the specified tile
         const inserted = this.grid[tileI][tileJ].insert(numI, numJ, n);
         if (inserted)
             this.count++;
         return inserted;
+    }
+
+    /**
+     * @param tileI the tile column
+     * @param tileJ the tile row
+     * @param numI the column to insert the number in of the tile
+     * @param numJ the row to insert the number in of the tile
+     * @param n the number to insert
+     * @return true if this move would not clash with any other tile (other than the one being inserted into)
+     */
+    private validMove(tileI: number, tileJ: number, numI: number, numJ: number, n: number): boolean {
+        // check if viable from other tiles
+        // i.e all tiles in the same row / column, that none of those don't have this number in the same tile row / column
+        // not scalable with the param `size`
+        for (let col = 0; col < Grid.size; col++){
+            for (let row = 0; row < Grid.size; row++){
+                const inC = col === tileI;
+                const inR = row === tileJ;
+                if (!inC !== !inR) { // equivalent of: inC XOR inR
+                    if (inC)
+                        if (this.grid[col][row].inColumn(numI, n))
+                            return false;
+                        else if (inR)
+                            if (this.grid[col][row].inRow(numJ, n))
+                                return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
@@ -72,7 +89,7 @@ export class Sudoku {
      * @return true if the param c is within the range [0, size^2]
      */
     validCoordinate(c: number): boolean {
-        return c >= 0 && c <= Math.pow(Sudoku.size, 2);
+        return c >= 0 && c <= Math.pow(Grid.size, 2);
     }
 
     /**
@@ -90,7 +107,7 @@ export class Sudoku {
      * @param globalC the global coordinate
      */
     tileCoordinate(globalC: number): number {
-        return Math.floor(globalC / Sudoku.size);
+        return Math.floor(globalC / Grid.size);
     }
 
     /**
@@ -100,7 +117,7 @@ export class Sudoku {
      * @param tileC the tile coordinate
      */
     numberCoordinate(globalC: number, tileC: number): number {
-        return globalC - tileC * Sudoku.size;
+        return globalC - tileC * Grid.size;
     }
 
     /**
@@ -110,6 +127,8 @@ export class Sudoku {
      * @param j the global row
      */
     eraseNumber(i: number, j: number) {
+        if (this.isComplete())
+            return;
         const tileI: number = this.tileCoordinate(i);
         const tileJ: number = this.tileCoordinate(j);
         const numI: number = this.numberCoordinate(i, tileI);
@@ -123,15 +142,7 @@ export class Sudoku {
      */
     isComplete(): boolean {
         // Since by definition, the puzzle is only complete on a full grid
-        return this.count === Math.pow(Sudoku.size, 4);
+        return this.count === Math.pow(Grid.size, 4);
     }
 
 }
-
-const s = new Sudoku();
-s.insert(1,1,7);
-s.insert(6,1,7);
-
-s.grid[0][0].display();
-console.log("-")
-s.grid[2][0].display();
