@@ -1,26 +1,43 @@
-import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Board from './ui/board/sudokuBoard';
+import { ThemeProvider } from "@material-ui/styles";
+import { darkTheme } from "./ui/themes/themes";
+import { CssBaseline, Box, Container, createStyles, Theme, makeStyles } from "@material-ui/core";
+import React from "react";
+import Header from "./ui/margins/header";
+import Footer from "./ui/margins/footer";
 
-function App() {
-  return (
-    <div className="App">
-        <header className="App-header">
-            <img src={logo} className="App-logo" alt="logo" />
-            <p>
-                Edit <code>src/App.tsx</code> and save to reload.
-            </p>
-            <a
-                className="App-link"
-                href="https://reactjs.org"
-                target="_blank"
-                rel="noopener noreferrer"
-            >
-                Learn React
-            </a>
-        </header>
-    </div>
-  );
+const useStyles = makeStyles((theme: Theme) =>
+    createStyles({
+        container: {
+            flexGrow: 1,
+            [theme.breakpoints.down("xs")]: {
+                marginTop: theme.spacing(9),
+                marginBottom: theme.spacing(2),
+            },
+            [theme.breakpoints.up("sm")]: {
+                marginTop: theme.spacing(11),
+                marginBottom: theme.spacing(3),
+            },
+        },
+    })
+);
+
+const App: React.FC = () => {
+    const { container } = useStyles();
+    return (
+        //use AppBar for header / footer
+        <ThemeProvider theme={darkTheme} >
+            <CssBaseline />
+            <Box display="flex" flexDirection="column" height="100%" >
+                <Header />
+                <Container className={container}>
+                    <Board />
+                </Container>
+                <Footer />
+            </Box>
+        </ThemeProvider>
+    )
 }
 
 export default App;
