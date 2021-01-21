@@ -4,9 +4,11 @@ export class Sudoku {
 
     static readonly size: number = 3;
     grid: Tile[][];
+    public count: number;
 
     constructor() {
         this.grid = [...Array(Sudoku.size)].map(() => Array(Sudoku.size));
+        this.count = 0;
 
         for (let i = 0; i < Sudoku.size; i++){
             for (let j = 0; j < Sudoku.size; j++){
@@ -15,6 +17,13 @@ export class Sudoku {
         }
     }
 
+    /**
+     * inserts a number n, into position (i,j) of the grid
+     * @param i the grid column
+     * @param j the grid row
+     * @param n the number to insert
+     * @return true if the number n was successfully inserted
+     */
     insert(i: number, j: number, n: number): boolean {
         if (!this.validCoordinates(i, j) || !Sudoku.validNumber(n))
             return false;
@@ -43,7 +52,10 @@ export class Sudoku {
         }
 
         //if this placement doesn't violate any other tile placement rules, attempt to place within the specified tile
-        return this.grid[tileI][tileJ].insert(numI, numJ, n);
+        const inserted = this.grid[tileI][tileJ].insert(numI, numJ, n);
+        if (inserted)
+            this.count++;
+        return inserted;
     }
 
     /**
@@ -102,7 +114,16 @@ export class Sudoku {
         const tileJ: number = this.tileCoordinate(j);
         const numI: number = this.numberCoordinate(i, tileI);
         const numJ: number = this.numberCoordinate(j, tileJ);
-        this.grid[tileI][tileJ].erase(numI, numJ);
+        if (this.grid[tileI][tileJ].erase(numI, numJ))
+            this.count--;
+    }
+
+    /**
+     * @return true if the puzzle has been fully completed
+     */
+    isComplete(): boolean {
+        // Since by definition, the puzzle is only complete on a full grid
+        return this.count === Math.pow(Sudoku.size, 4);
     }
 
 }

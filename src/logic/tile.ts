@@ -47,10 +47,12 @@ export default class Tile {
         return true;
     }
 
-    erase(i: number, j: number) {
-        if (!this.validCoordinates(i, j))
-            return;
+    erase(i: number, j: number): boolean {
+        if (!this.validCoordinates(i, j) || this.isEmpty(i, j))
+            return false;
+
         this.grid[i][j] = -1;
+        return true
     }
 
     /**
