@@ -26,9 +26,10 @@ const useStyles = makeStyles((theme: Theme) =>
 const App: React.FC = () => {
     const { container } = useStyles();
     return (
-        <ThemeProvider theme={darkTheme}>
+        //use AppBar for header / footer
+        <ThemeProvider theme={darkTheme} >
             <CssBaseline />
-            <Box display="flex" flexDirection="column" height="100%">
+            <Box display="flex" flexDirection="column" height="100%" >
                 <Header />
                 <Container className={container}>
                     <Board />

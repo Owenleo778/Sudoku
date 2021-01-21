@@ -3,10 +3,10 @@ import React from "react";
 
 const Footer: React.FC = () => {
     return (
-        <>
+        <div>
             <Divider />
             <Typography align="center">&copy; 2021 Owen Salvage. All rights reserved.</Typography>
-            </>
+            </div>
     );
 }
 
