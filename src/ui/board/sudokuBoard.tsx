@@ -4,9 +4,6 @@ import Paper from '@material-ui/core/Paper';
 import { Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
 
 const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
-    },
     innerTile: {
         border: "2px solid gray",
     },
@@ -21,6 +18,16 @@ const useStyles = makeStyles({
     },
     outerDown: {
         borderBottom: "5px solid black",
+    },
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    square: {
+        flex: 1,
+        aspectRatio: "1",
     },
 });
 
@@ -59,8 +66,8 @@ function applyStyle(n: number, style1: string, style2: string): string {
 }
 
 const Cell: React.FC<CellProps> = ({value, row, column}: CellProps) => {
-    const {innerTile, outerLeft, outerRight, outerUp, outerDown} = useStyles();
-    let classes = innerTile;
+    const {innerTile, outerLeft, outerRight, outerUp, outerDown, square} = useStyles();
+    let classes = `${innerTile} ${square}`;
 
     classes+= ` ${applyStyle(row, outerUp, outerDown)}`;
     classes+= ` ${applyStyle(column, outerLeft, outerRight)}`;
@@ -76,10 +83,9 @@ const Row: React.FC<RowProps> = ({row, rowN} :RowProps) => {
     return (
         <TableRow component="tr">
         {row.map(({tile}: Tile) => {
-            let column = -1;
+
             return (
-            tile[rowN].map((n => {
-                column++;
+            tile[rowN].map(((n, column) => {
                 return (
                 <Cell value={n} column={column} row={rowN} />
                 );
@@ -96,24 +102,20 @@ const grid = [
     [createTile(7), createTile(7), createTile(7)],
 ];
 
-const Board: React.FC = () => {
-    const {table} = useStyles();
-    return (
-        <TableContainer component={Paper}>
-            <Table className={table} aria-label="sudoku grid">
-                <TableBody>
-                    {grid.map((row: Tile[]) =>
-                        <>
-                            <Row row={row} rowN={0}/>
-                            <Row row={row} rowN={1}/>
-                            <Row row={row} rowN={2}/>
-                        </>
-                    )}
-
-                </TableBody>
-            </Table>
-        </TableContainer>
-    );
-}
+const Board: React.FC = () => (
+    <TableContainer component={Paper}>
+        <Table aria-label="sudoku grid">
+            <TableBody>
+                {grid.map((row: Tile[], key) => <
+                    React.Fragment key={key}>
+                        <Row row={row} rowN={0}/>
+                        <Row row={row} rowN={1}/>
+                        <Row row={row} rowN={2}/>
+                    </ React.Fragment>
+                )}
+            </TableBody>
+        </Table>
+    </TableContainer>
+)
 
 export default Board;
