@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {ReactElement} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
@@ -7,47 +7,72 @@ const useStyles = makeStyles({
     table: {
         minWidth: 650,
     },
+    outerTile: {
+        border: "5px solid black",
+    },
+    innerTile: {
+        border: "2px solid gray",
+    },
 });
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-    return { name, calories, fat, carbs, protein };
+type Tile = {
+    tile: number[][];
 }
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+function createTile(): Tile {
+    return { tile: [[1,2,3], [4,5,6], [7,8,9]]};
+}
+
+interface RowProps {
+    row: Tile[];
+    rowN: number;
+}
+
+const Row: React.FC<RowProps> = ({row, rowN} :RowProps) => {
+    const {outerTile, innerTile} = useStyles();
+
+    return (
+        <TableRow component="tr">
+        {row.map(({tile}: Tile) => {
+            let test = false;
+
+            return (
+            tile[rowN].map((n => {
+                test = !test;
+                return (
+                <TableCell align="center" scope="row" className={test ? outerTile : innerTile}>
+                    {n}
+                </TableCell>
+                );
+            }
+            )));
+        })}
+        </TableRow>
+    );
+}
+
+const grid = [
+    [createTile(), createTile(), createTile()],
+    [createTile(), createTile(), createTile()],
+    [createTile(), createTile(), createTile()],
 ];
 
 const Board: React.FC = () => {
-    const classes = useStyles();
+    const {table} = useStyles();
 
     return (
         <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Dessert (100g serving)</TableCell>
-                        <TableCell align="center">Calories</TableCell>
-                        <TableCell align="center">Fat&nbsp;(g)</TableCell>
-                        <TableCell align="center">Carbs&nbsp;(g)</TableCell>
-                        <TableCell align="center">Protein&nbsp;(g)</TableCell>
-                    </TableRow>
-                </TableHead>
+            <Table className={table} aria-label="sudoku grid">
                 <TableBody>
-                    {rows.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell align="center" component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="center">{row.calories}</TableCell>
-                            <TableCell align="center">{row.fat}</TableCell>
-                            <TableCell align="center">{row.carbs}</TableCell>
-                            <TableCell align="center">{row.protein}</TableCell>
-                        </TableRow>
-                    ))}
+                    {grid.map((row: Tile[]) =>
+                        <Row row={row} rowN={0}/>
+                    )}
+                    {grid.map((row: Tile[]) =>
+                        <Row row={row} rowN={1}/>
+                    )}
+                    {grid.map((row: Tile[]) =>
+                        <Row row={row} rowN={2}/>
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>
