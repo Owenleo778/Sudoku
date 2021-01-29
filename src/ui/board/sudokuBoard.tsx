@@ -22,6 +22,7 @@ const useStyles = makeStyles({
     },
     tableContainer: {
       width: "50%",
+      minWidth: "320px",
     },
 });
 
