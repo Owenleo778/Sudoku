@@ -1,53 +1,117 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from "@material-ui/core";
+import { Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
+import '../css/table.css';
 
 const useStyles = makeStyles({
-    table: {
-        minWidth: 650,
+    innerTile: {
+        border: "2px solid gray",
+    },
+    outerLeft: {
+        borderLeft: "5px solid black",
+    },
+    outerRight: {
+        borderRight: "5px solid black",
+    },
+    outerUp: {
+        borderTop: "5px solid black",
+    },
+    outerDown: {
+        borderBottom: "5px solid black",
+    },
+    tableContainer: {
+      width: "50%",
+      minWidth: "320px",
     },
 });
 
-function createData(name: string, calories: number, fat: number, carbs: number, protein: number) {
-    return { name, calories, fat, carbs, protein };
+type Tile = {
+    tile: number[][];
 }
 
-const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
+function createTile(n: number): Tile {
+    return { tile: [[n,n,n], [n+1,n+1,n+1], [n+2,n+2,n+2]]};
+}
+
+interface RowProps {
+    row: Tile[];
+    rowN: number;
+}
+
+interface CellProps {
+    value: number;
+    row: number;
+    column: number;
+}
+
+function applyStyle(n: number, style1: string, style2: string): string {
+    let out = "";
+    switch(n){
+        case 0: {
+            out = style1;
+            break;
+        }
+        case 2: {
+            out = style2;
+            break;
+        }
+    }
+    return out;
+}
+
+const Cell: React.FC<CellProps> = ({value, row, column}: CellProps) => {
+    const {innerTile, outerLeft, outerRight, outerUp, outerDown} = useStyles();
+    let classes = `${innerTile}`;
+
+    classes+= ` ${applyStyle(row, outerUp, outerDown)}`;
+    classes+= ` ${applyStyle(column, outerLeft, outerRight)}`;
+
+    return (
+        <TableCell align="center" scope="row" className={classes}>
+            <div className={"content"}>
+                {value}
+            </div>
+        </TableCell>
+    );
+}
+
+const Row: React.FC<RowProps> = ({row, rowN} :RowProps) => {
+    return (
+        <TableRow component="tr">
+        {row.map(({tile}: Tile) => {
+
+            return (
+            tile[rowN].map(((n, column) => {
+                return (
+                <Cell value={n} column={column} row={rowN} />
+                );
+            }
+            )));
+        })}
+        </TableRow>
+    );
+}
+
+const grid = [
+    [createTile(1), createTile(1), createTile(1)],
+    [createTile(4), createTile(4), createTile(4)],
+    [createTile(7), createTile(7), createTile(7)],
 ];
 
 const Board: React.FC = () => {
-    const classes = useStyles();
-
-    return (
-        <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell align="center">Dessert (100g serving)</TableCell>
-                        <TableCell align="center">Calories</TableCell>
-                        <TableCell align="center">Fat&nbsp;(g)</TableCell>
-                        <TableCell align="center">Carbs&nbsp;(g)</TableCell>
-                        <TableCell align="center">Protein&nbsp;(g)</TableCell>
-                    </TableRow>
-                </TableHead>
+    const {tableContainer} = useStyles();
+    return(
+        <TableContainer component={Paper} className={tableContainer}>
+            <Table aria-label="sudoku grid">
                 <TableBody>
-                    {rows.map((row) => (
-                        <TableRow key={row.name}>
-                            <TableCell align="center" component="th" scope="row">
-                                {row.name}
-                            </TableCell>
-                            <TableCell align="center">{row.calories}</TableCell>
-                            <TableCell align="center">{row.fat}</TableCell>
-                            <TableCell align="center">{row.carbs}</TableCell>
-                            <TableCell align="center">{row.protein}</TableCell>
-                        </TableRow>
-                    ))}
+                    {grid.map((row: Tile[], key) => <
+                        React.Fragment key={key}>
+                        <Row row={row} rowN={0}/>
+                        <Row row={row} rowN={1}/>
+                        <Row row={row} rowN={2}/>
+                    </ React.Fragment>
+                    )}
                 </TableBody>
             </Table>
         </TableContainer>
