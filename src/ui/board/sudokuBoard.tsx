@@ -2,6 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { Table, TableBody, TableCell, TableContainer, TableRow } from "@material-ui/core";
+import '../table.css';
 
 const useStyles = makeStyles({
     innerTile: {
@@ -19,15 +20,8 @@ const useStyles = makeStyles({
     outerDown: {
         borderBottom: "5px solid black",
     },
-    container: {
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    square: {
-        flex: 1,
-        aspectRatio: "1",
+    tableContainer: {
+      width: "50%",
     },
 });
 
@@ -66,15 +60,17 @@ function applyStyle(n: number, style1: string, style2: string): string {
 }
 
 const Cell: React.FC<CellProps> = ({value, row, column}: CellProps) => {
-    const {innerTile, outerLeft, outerRight, outerUp, outerDown, square} = useStyles();
-    let classes = `${innerTile} ${square}`;
+    const {innerTile, outerLeft, outerRight, outerUp, outerDown} = useStyles();
+    let classes = `${innerTile}`;
 
     classes+= ` ${applyStyle(row, outerUp, outerDown)}`;
     classes+= ` ${applyStyle(column, outerLeft, outerRight)}`;
 
     return (
         <TableCell align="center" scope="row" className={classes}>
-            {value}
+            <div className={"content"}>
+                {value}
+            </div>
         </TableCell>
     );
 }
@@ -102,20 +98,23 @@ const grid = [
     [createTile(7), createTile(7), createTile(7)],
 ];
 
-const Board: React.FC = () => (
-    <TableContainer component={Paper}>
-        <Table aria-label="sudoku grid">
-            <TableBody>
-                {grid.map((row: Tile[], key) => <
-                    React.Fragment key={key}>
+const Board: React.FC = () => {
+    const {tableContainer} = useStyles();
+    return(
+        <TableContainer component={Paper} className={tableContainer}>
+            <Table aria-label="sudoku grid">
+                <TableBody>
+                    {grid.map((row: Tile[], key) => <
+                        React.Fragment key={key}>
                         <Row row={row} rowN={0}/>
                         <Row row={row} rowN={1}/>
                         <Row row={row} rowN={2}/>
                     </ React.Fragment>
-                )}
-            </TableBody>
-        </Table>
-    </TableContainer>
-)
+                    )}
+                </TableBody>
+            </Table>
+        </TableContainer>
+    );
+}
 
 export default Board;

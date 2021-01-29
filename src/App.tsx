@@ -11,14 +11,12 @@ const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         container: {
             flexGrow: 1,
-            [theme.breakpoints.down("xs")]: {
-                marginTop: theme.spacing(9),
-                marginBottom: theme.spacing(2),
-            },
-            [theme.breakpoints.up("sm")]: {
-                marginTop: theme.spacing(11),
-                marginBottom: theme.spacing(3),
-            },
+            marginTop: theme.spacing(2),
+            marginBottom: theme.spacing(2),
+            width: "100%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
         },
     })
 );
